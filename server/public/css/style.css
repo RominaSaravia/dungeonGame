@@ -22,3 +22,17 @@ h3{
   font-weight: 600;
   color: #ffffff;
 }
+
+.explain-key {
+  width: 60%;
+  display: flex;
+  justify-content: center;
+  margin: auto;
+  color: #ffffff;
+  list-style: none;
+
+}
+
+.explain-key li {
+  padding: 0 1rem;
+}
