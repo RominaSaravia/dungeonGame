@@ -1,3 +1,4 @@
+const PORT = 3333;
 const express = require("express");
 const path = require("path");
 const bodyParser = require("body-parser");
@@ -36,6 +37,6 @@ app.get("/levelMap/:id", (req,res) => {
 })
 
 
-app.listen(3333, () => {
+app.listen(process.env.PORT || PORT, () => {
   console.log("Servidor iniciado en http://localhost:3333");
 })
