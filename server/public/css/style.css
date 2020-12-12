@@ -7,7 +7,7 @@ body {
   background-color: black;
 }
 .container {
-  padding: 1rem;
+  padding: 0.5rem;
 }
 canvas {
   border:4px solid rgb(0, 62, 78);
@@ -15,7 +15,7 @@ canvas {
   margin: auto;
 }
 h3{
-  padding: 1rem;
+  padding: 0.8rem;
   text-align: center;
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   font-size: 1.5rem;
@@ -27,6 +27,7 @@ h3{
   width: 60%;
   display: flex;
   justify-content: center;
+  align-items: center;
   margin: auto;
   color: #ffffff;
   list-style: none;
@@ -35,4 +36,12 @@ h3{
 
 .explain-key li {
   padding: 0 1rem;
+}
+
+#music-switch {
+  opacity: 0.5;
+  padding: 0.5rem;
+  background-color: rgba(134, 210, 230);
+  border-radius: 1rem;
+  border: none;
 }

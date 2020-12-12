@@ -29,15 +29,13 @@ let scene;
 
 
 //------------------SONIDO-----------------------
-
-let audioCtx;
+let musicPlaying = false;
 let sfx01, sfx02, sfx03, sfx04;
 let music01;
+
+const switchMusic = document.getElementById("music-switch");
+
 window.addEventListener("load", function () {
-  console.log("windowOnLoad")
-  audioCtx = new AudioContext();
-
-
   sfx_gotIt = new Howl({
     src: ["fx/gui-click-sfx.wav"],
     loop: false,
@@ -50,27 +48,36 @@ window.addEventListener("load", function () {
 
 
   music01 = new Howl({
-    src: ["music/09.ogg"],
+    src: ["music/pixel-cyber-forest-melody.wav"],
     loop: true,
   });
 
-  audioCtx.resume().then(() => {
-    console.log('Playback resumed successfully');
-  });
-
 })
+
+
+function musicPlays() {
+
+  if (musicPlaying == false) {
+    musicPlaying = true;
+    switchMusic.style.opacity = 1;
+    music01.play();
+  } else {
+    musicPlaying = false;
+    switchMusic.style.opacity = 0.5;
+    music01.stop();
+  }
+
+}
 
 //-----------------------------------------------
 
 
 // -----------------LOCAL STORAGE----------------
 function save(valor) {
-  console.log("Dato guardado");
   localStorage.setItem("nombre_jugador", valor);
 }
 
 function restore() {
-  console.log(localStorage.getItem("nombre_jugador"));
   return (localStorage.getItem("nombre_jugador"));
 }
 
@@ -90,7 +97,7 @@ var enemy01 = function (x, y) {
   this.delay = 50;
   this.frames = 0;
 
-  
+
   this.coordenates = function () {
     let coord = [];
     coord.push(this.x);
@@ -199,8 +206,7 @@ let mainChr = function (x, y) {
 
     this.key = haveKey;
     if (this.key == false) {
-      console.log(haveKey)
-      scene[1][10] = 3;
+      scene[ getScene.Keyxy[0] ][ getScene.Keyxy[1] ] = 3;
     }
   }
 
@@ -224,38 +230,68 @@ let mainChr = function (x, y) {
 
   // WIN GAME
   this.victory = function () {
-    console.log("Has ganado");
-    this.x = 2;
-    this.y = 3;
-    this.key = false;
-    scene[1][10] = 3;
     levelMap++;
 
     const requestMap = new XMLHttpRequest();
 
     requestMap.addEventListener("load", function () {
       if (this.status == 200) {
+        //No hay más niveles, vuelve al nivel 1
+        if (!this.responseText) {
+          levelMap = 1;
+          console.log("No hay mas niveles")
 
-        getScene = JSON.parse(this.responseText);
-        scene = getScene.scene;
+          const restartMap = new XMLHttpRequest();
+
+          restartMap.addEventListener("load", function () {
+            if (this.status == 200) {
+              getScene = JSON.parse(this.responseText);
+
+              scene = getScene.scene;
+
+              this.x = getScene.PJxy[0];
+              this.y = getScene.PJxy[1];
+              this.key = false;
+              //Adding Key
+              scene[getScene.Keyxy[0]][getScene.Keyxy[1]] = 3;
+
+            } else {
+              console.log("ERROR en el pedido del mapa");
+            }
+          });
+
+          restartMap.open("GET", "levelMap/" + levelMap);
+          restartMap.send();
+
+        } else {
+          getScene = JSON.parse(this.responseText);
+
+          scene = getScene.scene;
+
+          this.x = getScene.PJxy[0];
+          this.y = getScene.PJxy[1];
+          this.key = false;
+          //Adding Key
+          scene[getScene.Keyxy[0]][getScene.Keyxy[1]] = 3;
+        }
+
 
       } else {
-        console.log("ERROR");
+        console.log("ERROR en el pedido del mapa");
       }
     });
 
     requestMap.open("GET", "levelMap/" + levelMap);
     requestMap.send();
-
   }
+
 
   //GAMEOVER
   this.dead = function () {
-    console.log("Has MUERTO");
-    this.x = 2;
-    this.y = 3;
+    this.x = getScene.PJxy[0];
+    this.y = getScene.PJxy[1];
     this.key = false;  // El jugador ya no tiene la llave
-    scene[1][10] = 3;  // La llave vuelve a su lugar de origen
+    scene[getScene.Keyxy[0]][getScene.Keyxy[1]] = 3;  // La llave vuelve a su lugar de origen
   }
 
 
@@ -295,7 +331,6 @@ let mainChr = function (x, y) {
       sfx_gotIt.play();
       this.key = true;
       scene[this.y][this.x] = 2;
-      console.log("Has obtenido la llave");
     }
 
     //VICTORIA - se abre la puerta
@@ -304,96 +339,95 @@ let mainChr = function (x, y) {
         sfx_gotIt.play();
         this.victory();
       } else {
-        console.log("Te falta la llave, no puedes pasar");
 
       }
     }
   }
 }
 
-function inicializador () {
-  // Cuando se carga la pagina inicia el juego  
-    canvas = document.getElementById("canvas");
-    ctx = canvas.getContext("2d");
-  
-    const requestMap = new XMLHttpRequest();
-  
-    requestMap.addEventListener("load", function () {
-      if (this.status == 200) {
-  
-        getScene = JSON.parse(this.responseText);
-        scene = getScene.scene;
-  
-        // Se crea el jugador
-        PJ = new mainChr(getScene.PJx , getScene.PJy);
-  
-      } else {
-        console.log("ERROR");
-  
-  
-      }
-    });
-  
-  
-    requestMap.open("GET", "levelMap/" + levelMap);
-    requestMap.send();
-  
-  
-    tileMap = new Image();
-    tileMap.src = 'img/TileSet.png'
-  
-  
-  
-    //Se crean los enemigos
-    enemies.push(new enemy01(6, 1));
-    enemies.push(new enemy01(10, 3));
-    enemies.push(new enemy01(17, 5));
-  
-    //Crea objetos en el mapa
-    showLight.push(new light(11, 3));
-    showLight.push(new light(13, 3));
-  
-  
-    //Lectura del teclado
-    document.addEventListener("keydown", function (e) {
-      if (e.key == "ArrowUp") {
-        PJ.movUp();
-        sfx_movement.play();
-      }
-      if (e.key == "ArrowDown") {
-        PJ.movDown();
-        sfx_movement.play();
-      }
-      if (e.key == "ArrowLeft") {
-        PJ.movLeft();
-        sfx_movement.play();
-      }
-      if (e.key == "ArrowRight") {
-        PJ.movRight();
-        sfx_movement.play();
-      }
 
-      if (e.key == "g") {
-        saveGame();
-  
-      }
-  
-      if (e.key == "c") {
-        loadGame();
-      }
-  
-      if (e.key == "b") {
-      }
-  
-    });
-  
-  
-    setInterval(function () {
-      main();
-  
-    }, 1000 / FPS)
-  
-  }
+function inicializador() {
+  // Cuando se carga la pagina inicia el juego  
+  canvas = document.getElementById("canvas");
+  ctx = canvas.getContext("2d");
+
+  const requestMap = new XMLHttpRequest();
+
+  requestMap.addEventListener("load", function () {
+    if (this.status == 200) {
+
+      getScene = JSON.parse(this.responseText);
+      scene = getScene.scene;
+
+      // Se crea el jugador
+      PJ = new mainChr(getScene.PJxy[0], getScene.PJxy[1]);
+
+      scene[getScene.Keyxy[0]][getScene.Keyxy[1]] = 3;
+
+    } else {
+      console.log("ERROR");
+
+
+    }
+  });
+
+
+  requestMap.open("GET", "levelMap/" + levelMap);
+  requestMap.send();
+
+  tileMap = new Image();
+  tileMap.src = 'img/TileSet.png'
+
+  //Se crean los enemigos
+  enemies.push(new enemy01(6, 1));
+  enemies.push(new enemy01(10, 3));
+  enemies.push(new enemy01(17, 5));
+
+  //Crea objetos en el mapa
+  showLight.push(new light(11, 3));
+  showLight.push(new light(13, 3));
+
+
+  //Lectura del teclado
+  document.addEventListener("keydown", function (e) {
+    if (e.key == "ArrowUp") {
+      PJ.movUp();
+      sfx_movement.play();
+    }
+    if (e.key == "ArrowDown") {
+      PJ.movDown();
+      sfx_movement.play();
+    }
+    if (e.key == "ArrowLeft") {
+      PJ.movLeft();
+      sfx_movement.play();
+    }
+    if (e.key == "ArrowRight") {
+      PJ.movRight();
+      sfx_movement.play();
+    }
+
+    if (e.key == "g") {
+      saveGame();
+
+    }
+
+    if (e.key == "c") {
+      loadGame();
+    }
+
+    if (e.key == "b") {
+    }
+
+  });
+
+
+  setInterval(function () {
+    main();
+
+  }, 1000 / FPS)
+
+}
 
 
 // Recorre el array scene y dibuja el mapa del juego
@@ -417,7 +451,7 @@ let light = function (x, y) {
   this.contador = 0;
   this.delay = 8;
 
-  
+
 
   this.changeFrame = function () {
     if (this.frames < 3) {
