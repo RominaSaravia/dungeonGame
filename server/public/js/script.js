@@ -37,25 +37,17 @@ window.addEventListener("load", function () {
   console.log("windowOnLoad")
   audioCtx = new AudioContext();
 
-  sfx01 = new Howl({
-    src: ["fx/nuncaconoci.wav"],
-    loop: false,
-  });
 
-  sfx02 = new Howl({
+  sfx_gotIt = new Howl({
     src: ["fx/gui-click-sfx.wav"],
     loop: false,
   });
 
-  sfx03 = new Howl({
-    src: ["fx/gritty-snare-1.wav"],
+  sfx_movement = new Howl({
+    src: ["fx/sound-of-the-walk.wav"],
     loop: false,
   });
 
-  sfx04 = new Howl({
-    src: ["fx/you-hore.ogg"],
-    loop: false,
-  });
 
   music01 = new Howl({
     src: ["music/09.ogg"],
@@ -300,6 +292,7 @@ let mainChr = function (x, y) {
     let object = scene[this.y][this.x];
     //Obtiene llave
     if (object == 3) {
+      sfx_gotIt.play();
       this.key = true;
       scene[this.y][this.x] = 2;
       console.log("Has obtenido la llave");
@@ -308,6 +301,7 @@ let mainChr = function (x, y) {
     //VICTORIA - se abre la puerta
     if (object == 1) {
       if (this.key == true) {
+        sfx_gotIt.play();
         this.victory();
       } else {
         console.log("Te falta la llave, no puedes pasar");
@@ -364,19 +358,19 @@ function inicializador () {
     document.addEventListener("keydown", function (e) {
       if (e.key == "ArrowUp") {
         PJ.movUp();
-        sfx02.play();
+        sfx_movement.play();
       }
       if (e.key == "ArrowDown") {
         PJ.movDown();
-        sfx02.play();
+        sfx_movement.play();
       }
       if (e.key == "ArrowLeft") {
         PJ.movLeft();
-        sfx02.play();
+        sfx_movement.play();
       }
       if (e.key == "ArrowRight") {
         PJ.movRight();
-        sfx02.play();
+        sfx_movement.play();
       }
 
       if (e.key == "g") {
