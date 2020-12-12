@@ -9,18 +9,6 @@ let enemies = [];
 let widthTile = 32;
 let heightTile = 32;
 
-//MAPA-TILES
-let dirt = "#754e1a";
-let water = "#347aeb";
-let plant = "#19942a";
-let wall = "#808080";
-
-let colorMainChr = "#044f14";
-
-// OBJETOS USABLES
-let door = "#994C00";
-let keyDoor = "#FFFF00";
-
 //TILES DEL MAPA
 let levelMap = 1;
 let tileMap;
@@ -206,7 +194,7 @@ let mainChr = function (x, y) {
 
     this.key = haveKey;
     if (this.key == false) {
-      scene[ getScene.Keyxy[0] ][ getScene.Keyxy[1] ] = 3;
+      scene[ getScene.Keyxy[1] ][ getScene.Keyxy[0] ] = 3;
     }
   }
 
@@ -253,7 +241,7 @@ let mainChr = function (x, y) {
               this.y = getScene.PJxy[1];
               this.key = false;
               //Adding Key
-              scene[getScene.Keyxy[0]][getScene.Keyxy[1]] = 3;
+              scene[getScene.Keyxy[1]][getScene.Keyxy[0]] = 3;
 
             } else {
               console.log("ERROR en el pedido del mapa");
@@ -272,7 +260,7 @@ let mainChr = function (x, y) {
           this.y = getScene.PJxy[1];
           this.key = false;
           //Adding Key
-          scene[getScene.Keyxy[0]][getScene.Keyxy[1]] = 3;
+          scene[getScene.Keyxy[1]][getScene.Keyxy[0]] = 3;
         }
 
 
@@ -291,7 +279,7 @@ let mainChr = function (x, y) {
     this.x = getScene.PJxy[0];
     this.y = getScene.PJxy[1];
     this.key = false;  // El jugador ya no tiene la llave
-    scene[getScene.Keyxy[0]][getScene.Keyxy[1]] = 3;  // La llave vuelve a su lugar de origen
+    scene[getScene.Keyxy[1]][getScene.Keyxy[0]] = 3;  // La llave vuelve a su lugar de origen
   }
 
 
@@ -362,7 +350,7 @@ function inicializador() {
       // Se crea el jugador
       PJ = new mainChr(getScene.PJxy[0], getScene.PJxy[1]);
 
-      scene[getScene.Keyxy[0]][getScene.Keyxy[1]] = 3;
+      scene[getScene.Keyxy[1]][getScene.Keyxy[0]] = 3;
 
     } else {
       console.log("ERROR");
@@ -550,8 +538,8 @@ function loadGame() {
 //----------------------------------------------
 
 function eraseCanvas() {
-  canvas.width = (32 * 25);
-  canvas.height = (32 * 15);
+  canvas.width = (widthTile * 25);
+  canvas.height = (widthTile * 15);
 }
 
 

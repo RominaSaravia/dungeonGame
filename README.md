@@ -12,6 +12,7 @@ __Uso de teclas__
 * c: Cargar momento de la partida
 
 > Las partidas se guardan en el localStorage
+
 > Los niveles o mapas están en un archivo JSON: levelMap.json
 
 
