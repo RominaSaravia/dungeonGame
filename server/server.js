@@ -6,10 +6,11 @@ const bodyParser = require("body-parser");
 const levelmapRouter = require("./routers/levelmapRouter");
 
 const app = express();
-app.use(bodyParser.json())
 
+//Middleware recursos estaticos
 app.use(express.static(path.join(__dirname, "public")));
 
+app.use(bodyParser.json())
 
 //Landing
 app.get("/", (req,res) => {
@@ -21,5 +22,5 @@ app.use("/levelMap", levelmapRouter);
 
 
 app.listen(process.env.PORT || PORT, () => {
-  console.log("Servidor iniciado en http://localhost:3333");
+  console.log(`Servidor iniciado en http://localhost:${PORT}`);
 })

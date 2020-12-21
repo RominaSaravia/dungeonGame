@@ -3,7 +3,7 @@ const maps = require("../getData");
 
 const levelMapRouter = express.Router();
 
-// endpoint GET Lista de mapas
+// GET devuelve toda la lista de mapas
 levelMapRouter.get("/", (req,res) => {
 
   maps.getAll( levelMap => {
@@ -13,7 +13,7 @@ levelMapRouter.get("/", (req,res) => {
 
 })
 
-// Endpoint GET con datos del mapa
+// GET consulta el objeto levelMap por ID
 levelMapRouter.get("/:id", (req,res) => {
 
   maps.getLevel(req.params.id, levelMap => {
